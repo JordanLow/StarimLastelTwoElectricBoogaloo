@@ -45,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
         }
 	}
 	
-	bool isGrounded()
+	public bool isGrounded()
 	{
 		return myFeetCollider.IsTouchingLayers(LayerMask.GetMask("Ground"));
 	}
@@ -57,7 +57,7 @@ public class PlayerMovement : MonoBehaviour
 	
 	bool grassSpawnCheck() // Check if current ground is valid for grass growth
 	{
-		return !Input.GetKey(KeyCode.LeftShift) && isGrounded() && moveInput.x != 0 && !myHurtBoxCollider.IsTouchingLayers(LayerMask.GetMask("Grass")) && !onSpawner;
+		return !Input.GetKey(KeyCode.LeftShift) && isGrounded() && moveInput.x != 0 && !myFeetCollider.IsTouchingLayers(LayerMask.GetMask("Grass")) && !onSpawner;
 	}
 	
     void Move()

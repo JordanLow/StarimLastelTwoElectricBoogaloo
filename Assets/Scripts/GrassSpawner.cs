@@ -13,9 +13,14 @@ public class GrassSpawner : MonoBehaviour
     {
 		if (other.transform.gameObject.tag == "Player") 
 		{
-			transform.parent.Find("Grass").gameObject.SetActive(true);
-			other.GetComponent<PlayerMovement>().OffSpawner();
-			Object.Destroy(this.gameObject);
+			if (other.GetComponent<PlayerMovement>().isGrounded()) {
+				transform.parent.Find("Grass").gameObject.SetActive(true);
+				other.GetComponent<PlayerMovement>().OffSpawner();
+				Object.Destroy(this.gameObject);
+			} else {
+				other.GetComponent<PlayerMovement>().OffSpawner();
+				Object.Destroy(transform.parent.gameObject);
+			}
 		}
 	}
 }
