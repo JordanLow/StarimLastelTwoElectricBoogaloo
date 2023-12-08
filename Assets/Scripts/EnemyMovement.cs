@@ -18,7 +18,7 @@ public class EnemyMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        myRigidBody.velocity = new Vector2(moveValue, 0);
+        myRigidBody.velocity = new Vector2(-moveValue, 0);
     }
     void OnTriggerExit2D(Collider2D other)
     {
@@ -26,6 +26,13 @@ public class EnemyMovement : MonoBehaviour
         {
             moveValue = -moveValue;
             FlipEnemyFacing();
+        }
+    }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Grass")
+        {
+            Destroy(other.transform.parent.gameObject);
         }
     }
     void FlipEnemyFacing()
