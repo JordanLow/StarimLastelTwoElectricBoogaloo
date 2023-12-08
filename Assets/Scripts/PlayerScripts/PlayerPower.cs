@@ -10,6 +10,8 @@ public class PlayerPower : MonoBehaviour
     [SerializeField] Tilemap wallTilemap;
     [SerializeField] Tilemap vineTilemap;
     [SerializeField] Tile vineTile;
+    //Probably a better way to get this data, just using this for now
+    //TODO find better way to get this data
     PlayerResource playerResource;
     PlayerMovement playerMovement;
     bool existingVine = false;

@@ -7,11 +7,13 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float moveValue = 1f;
     [SerializeField] float jumpSpeed = 5f;
+	[SerializeField] float climbSpeed = 1f;
 	[SerializeField] BoxCollider2D myFeetCollider;
 	[SerializeField] CapsuleCollider2D myHurtBoxCollider;
 	[SerializeField] GameObject grass; // Type of Grass to spawn
 
 	bool onSpawner = false; // If floor is already marked for grass growth
+	bool tryingToClimb = false;
 	int direction = 1; // 1: Facing Right, -1: Facing Left
 
     Vector2 moveInput;
@@ -27,6 +29,8 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         Move();
+		FlipFacing();
+		ClimbVine();
     }
 
     void OnMove(InputValue value)
@@ -36,6 +40,21 @@ public class PlayerMovement : MonoBehaviour
 	
 	void OnJump(InputValue value)
 	{
+		if (isOnVine())
+		{
+			if (value.isPressed)
+			{
+				tryingToClimb = true;
+			}
+			else
+			{
+				tryingToClimb = false;
+			}
+			return;
+		}
+		tryingToClimb = false;
+		//To ensure climbing always stops when space is released
+		//Climbing Vine Interactions
 		if (!isGrounded()) {return;};
 		float jump = jumpSpeed;
 		if (onGrass()) {jump *= 2;} // Forest Leap
@@ -50,6 +69,10 @@ public class PlayerMovement : MonoBehaviour
 		return myFeetCollider.IsTouchingLayers(LayerMask.GetMask("Ground"));
 	}
 	
+	public bool isOnVine()
+	{
+		return myHurtBoxCollider.IsTouchingLayers(LayerMask.GetMask("Vine"));
+	}
 	bool onGrass()
 	{
 		return myFeetCollider.IsTouchingLayers(LayerMask.GetMask("Grass"));
@@ -69,7 +92,6 @@ public class PlayerMovement : MonoBehaviour
 		}
         Vector2 playerVelocity = new Vector2(moveInput.x * moveValue * sprint, myRigidBody.velocity.y);
 		myRigidBody.velocity = playerVelocity;
-		FlipFacing();
 		if (grassSpawnCheck()) 
 		{
 			Vector3 grassSpawn = new Vector3(Mathf.Round(transform.position.x * 2) / 2, Mathf.Round(transform.position.y * 2)  /  2, transform.position.z);
@@ -80,7 +102,7 @@ public class PlayerMovement : MonoBehaviour
 	
 	void FlipFacing()
     {
-		if (!isGrounded()) {return;}
+		//if (!isGrounded()) {return;} this is not meant to be here
 		bool playerHasHorizontalSpeed = Mathf.Abs(myRigidBody.velocity.x) > Mathf.Epsilon;
 		if (playerHasHorizontalSpeed)
 		{
@@ -88,6 +110,15 @@ public class PlayerMovement : MonoBehaviour
 			direction = ((int)Mathf.Sign(myRigidBody.velocity.x));
 		}
     }
+	void ClimbVine()
+	{
+		if (!tryingToClimb){return;}
+		//dont climb if button not pressed
+		if (!isOnVine()){return;}
+		//dont climb if not on a vine
+		Vector2 climbVelocity = new Vector2(myRigidBody.velocity.x, climbSpeed);
+		myRigidBody.velocity = climbVelocity;
+	}
 	
 	public void OnSpawner() {
 		onSpawner = true;
