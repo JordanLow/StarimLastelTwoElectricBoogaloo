@@ -1336,6 +1336,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveValue: 5
+  sprintValue: 10
+  grassSprintValue: 20
   jumpSpeed: 20
   climbSpeed: 5
   myFeetCollider: {fileID: 799452361}

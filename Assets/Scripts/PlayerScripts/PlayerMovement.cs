@@ -1,16 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float moveValue = 1f;
+	[SerializeField] float sprintValue = 2f;
+	[SerializeField] float grassSprintValue = 4f;
     [SerializeField] float jumpSpeed = 5f;
 	[SerializeField] float climbSpeed = 1f;
 	[SerializeField] BoxCollider2D myFeetCollider;
 	[SerializeField] CapsuleCollider2D myHurtBoxCollider;
 	[SerializeField] GameObject grass; // Type of Grass to spawn
+	GameObject currentInteractingGrass;
 
 	bool onSpawner = false; // If floor is already marked for grass growth
 	bool tryingToClimb = false;
@@ -85,12 +89,16 @@ public class PlayerMovement : MonoBehaviour
 	
     void Move()
     {
-		float sprint = 1f;
+		float move = moveValue;
 		if (Input.GetKey(KeyCode.LeftShift)) 
 		{
-				sprint = 2f;
+			move = sprintValue;
+			if (onGrass())
+			{
+				move = grassSprintValue;
+			}
 		}
-        Vector2 playerVelocity = new Vector2(moveInput.x * moveValue * sprint, myRigidBody.velocity.y);
+        Vector2 playerVelocity = new Vector2(moveInput.x * move, myRigidBody.velocity.y);
 		myRigidBody.velocity = playerVelocity;
 		if (grassSpawnCheck()) 
 		{
@@ -126,5 +134,12 @@ public class PlayerMovement : MonoBehaviour
 	
 	public void OffSpawner() {
 		onSpawner = false;
+	}
+	void OnTriggerExit2D(Collider2D other)
+	{
+		if (other.tag == "Grass" && Input.GetKey(KeyCode.LeftShift))
+		{
+			Destroy(other.transform.parent.gameObject);
+		}
 	}
 }
