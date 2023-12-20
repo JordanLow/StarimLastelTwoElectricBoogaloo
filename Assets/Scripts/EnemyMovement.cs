@@ -36,6 +36,12 @@ public class EnemyMovement : MonoBehaviour
             Destroy(other.transform.parent.gameObject);
             //Destroys Grass object since collider is in child
         }
+		if (enemyVision.IsTouchingLayers(LayerMask.GetMask("Wall")))
+        {
+            moveValue = -moveValue;
+            //Flips the movement Direction
+            FlipEnemyFacing();
+        }
     }
     void OnCollisionEnter2D(Collision2D other)
     {

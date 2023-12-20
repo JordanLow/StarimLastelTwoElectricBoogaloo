@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField] float sprintValue = 2f;
 	[SerializeField] float grassSprintValue = 4f;
     [SerializeField] float jumpSpeed = 5f;
+	[SerializeField] float forestLeapBoost = 2f;
 	[SerializeField] float climbSpeed = 1f;
 	[SerializeField] BoxCollider2D myFeetCollider;
 	[SerializeField] CapsuleCollider2D myHurtBoxCollider;
@@ -61,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
 		//Climbing Vine Interactions
 		if (!isGrounded()) {return;};
 		float jump = jumpSpeed;
-		if (onGrass()) {jump *= 2;} // Forest Leap
+		if (onGrass()) {jump *= forestLeapBoost;} // Forest Leap
 		if (value.isPressed)
         {
             myRigidBody.velocity += new Vector2(0f, jump);
