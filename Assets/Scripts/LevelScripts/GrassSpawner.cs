@@ -11,14 +11,14 @@ public class GrassSpawner : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D other) // Grow grass on marked spot and destroy marker (self)
     {
-		if (other.transform.gameObject.tag == "Player") 
+		if (other.transform.gameObject.tag == "Feet") 
 		{
-			if (other.GetComponent<PlayerMovement>().isGrounded()) {
+			if (other.transform.parent.GetComponent<PlayerMovement>().isGrounded()) {
 				transform.parent.Find("Grass").gameObject.SetActive(true);
-				other.GetComponent<PlayerMovement>().OffSpawner();
+				other.transform.parent.GetComponent<PlayerMovement>().OffSpawner();
 				Object.Destroy(this.gameObject);
 			} else {
-				other.GetComponent<PlayerMovement>().OffSpawner();
+				other.transform.parent.GetComponent<PlayerMovement>().OffSpawner();
 				Object.Destroy(transform.parent.gameObject);
 			}
 		}

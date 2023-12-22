@@ -8,6 +8,21 @@ public class PlayerResource : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        powerUpVine = false;
+        resetPowerUps();
     }
+	
+	void resetPowerUps()
+	{
+		powerUpVine = false;
+	}
+	
+	// Event Listeners
+	private void OnEnable()
+	{
+		EventHandler.OnExitLevel += resetPowerUps;
+	}
+	private void OnDisable()
+	{
+		EventHandler.OnExitLevel -= resetPowerUps;
+	}
 }

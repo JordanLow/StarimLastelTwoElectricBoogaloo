@@ -8,6 +8,6 @@ public class PlayerDeath : MonoBehaviour
     public void Die()
     {
         Debug.Log("Player Dies");
-        //TODO Death Mechanics
+        SceneHandler.instance.ReloadScene();
     }
 }

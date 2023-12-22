@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Spawner
   - Grass
+  - Feet
   layers:
   - Default
   - TransparentFX
