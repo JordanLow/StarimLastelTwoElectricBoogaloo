@@ -9,13 +9,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float moveValue = 1f;
 	[SerializeField] float sprintValue = 2f;
 	[SerializeField] float grassSprintValue = 4f;
-    [SerializeField] float jumpSpeed = 5f;
+    [SerializeField] float jumpHeight = 30f;
 	[SerializeField] float forestLeapBoost = 2f;
 	[SerializeField] float climbSpeed = 1f;
 	[SerializeField] BoxCollider2D myFeetCollider;
 	[SerializeField] CapsuleCollider2D myHurtBoxCollider;
 	[SerializeField] GameObject grass; // Type of Grass to spawn
 	GameObject currentInteractingGrass;
+	
+	[SerializeField] Animator animator;
 
 	bool onSpawner = false; // If floor is already marked for grass growth
 	bool tryingToClimb = false;
@@ -61,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
 		//To ensure climbing always stops when space is released
 		//Climbing Vine Interactions
 		if (!isGrounded()) {return;};
-		float jump = jumpSpeed;
+		float jump = jumpHeight;
 		if (onGrass()) {jump *= forestLeapBoost;} // Forest Leap
 		if (value.isPressed)
         {
@@ -93,12 +95,29 @@ public class PlayerMovement : MonoBehaviour
 		float move = moveValue;
 		if (Input.GetKey(KeyCode.LeftShift)) 
 		{
+			animator.SetBool("Sprinting", true);
+			animator.SetBool("Walking", false);
 			move = sprintValue;
 			if (onGrass())
 			{
 				move = grassSprintValue;
 			}
+		} else {
+			animator.SetBool("Sprinting", false);
+			animator.SetBool("Walking", true);
 		}
+		
+		if (moveInput.x == 0f) {
+			animator.SetBool("Sprinting", false);
+			animator.SetBool("Walking", false);
+		}
+		if (!isGrounded()) {
+			animator.SetBool("Airborne", true);
+		} else {
+			animator.SetBool("Airborne", false);
+		}
+		// Refactor our of Unity Animator State Machine when possible, this bit here sucks. Set params by ID as interim measure if needed
+		
         Vector2 playerVelocity = new Vector2(moveInput.x * move, myRigidBody.velocity.y);
 		myRigidBody.velocity = playerVelocity;
 		if (grassSpawnCheck()) 

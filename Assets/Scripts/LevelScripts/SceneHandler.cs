@@ -24,4 +24,9 @@ public class SceneHandler : MonoBehaviour
 	{
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
+	
+	public void LoadScene(int id)
+	{
+		SceneManager.LoadScene(id);
+	}
 }
