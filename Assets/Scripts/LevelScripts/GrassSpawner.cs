@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class GrassSpawner : MonoBehaviour
 {
 	void Awake() 
@@ -24,3 +25,4 @@ public class GrassSpawner : MonoBehaviour
 		}
 	}
 }
+*/

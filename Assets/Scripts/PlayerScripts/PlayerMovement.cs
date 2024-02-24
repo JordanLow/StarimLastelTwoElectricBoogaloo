@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -14,12 +16,13 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField] float climbSpeed = 1f;
 	[SerializeField] BoxCollider2D myFeetCollider;
 	[SerializeField] CapsuleCollider2D myHurtBoxCollider;
-	[SerializeField] GameObject grass; // Type of Grass to spawn
+	//[SerializeField] GameObject grass; // Type of Grass to spawn
 	GameObject currentInteractingGrass;
 	
 	[SerializeField] Animator animator;
+	[SerializeField] Tile grassTile;
+	[SerializeField] Tilemap grassTilemap;
 
-	bool onSpawner = false; // If floor is already marked for grass growth
 	bool tryingToClimb = false;
 	int direction = 1; // 1: Facing Right, -1: Facing Left
 
@@ -87,15 +90,17 @@ public class PlayerMovement : MonoBehaviour
 	
 	bool grassSpawnCheck() // Check if current ground is valid for grass growth
 	{
-		return !Input.GetKey(KeyCode.LeftShift) && isGrounded() && moveInput.x != 0 && !myFeetCollider.IsTouchingLayers(LayerMask.GetMask("Grass")) && !onSpawner;
+		return /*!Input.GetKey(KeyCode.LeftShift) &&*/ isGrounded() && moveInput.x != 0 && !onGrass();
 	}
 	
     void Move()
     {
 		float move = moveValue;
+		animator.SetBool("Walking", true);
+		/*
 		if (Input.GetKey(KeyCode.LeftShift)) 
 		{
-			animator.SetBool("Sprinting", true);
+			//animator.SetBool("Sprinting", true);
 			animator.SetBool("Walking", false);
 			move = sprintValue;
 			if (onGrass())
@@ -103,12 +108,12 @@ public class PlayerMovement : MonoBehaviour
 				move = grassSprintValue;
 			}
 		} else {
-			animator.SetBool("Sprinting", false);
+			//animator.SetBool("Sprinting", false);
 			animator.SetBool("Walking", true);
 		}
-		
+		*/
 		if (moveInput.x == 0f) {
-			animator.SetBool("Sprinting", false);
+			//animator.SetBool("Sprinting", false);
 			animator.SetBool("Walking", false);
 		}
 		if (!isGrounded()) {
@@ -122,9 +127,10 @@ public class PlayerMovement : MonoBehaviour
 		myRigidBody.velocity = playerVelocity;
 		if (grassSpawnCheck()) 
 		{
-			Vector3 grassSpawn = new Vector3(Mathf.Round(transform.position.x * 2) / 2, Mathf.Round(transform.position.y * 2)  /  2, transform.position.z);
-			Instantiate(grass, grassSpawn, transform.rotation);
-			OnSpawner();
+			Vector3Int grassSpawn = new Vector3Int((int)math.floor(transform.localPosition.x), (int)math.round(transform.localPosition.y), (int)transform.localPosition.z);
+			grassTilemap.SetTile(grassSpawn, grassTile);
+			//Instantiate(grass, grassSpawn, transform.rotation);
+			//OnSpawner();
 		}
     }
 	
@@ -147,14 +153,7 @@ public class PlayerMovement : MonoBehaviour
 		Vector2 climbVelocity = new Vector2(myRigidBody.velocity.x, climbSpeed);
 		myRigidBody.velocity = climbVelocity;
 	}
-	
-	public void OnSpawner() {
-		onSpawner = true;
-	}
-	
-	public void OffSpawner() {
-		onSpawner = false;
-	}
+	/*
 	void OnTriggerExit2D(Collider2D other)
 	{
 		if (other.tag == "Grass" && Input.GetKey(KeyCode.LeftShift))
@@ -162,4 +161,5 @@ public class PlayerMovement : MonoBehaviour
 			Destroy(other.transform.parent.gameObject);
 		}
 	}
+	*/
 }
