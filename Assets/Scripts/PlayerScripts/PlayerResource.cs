@@ -9,6 +9,7 @@ public class PlayerResource : MonoBehaviour
     void Start()
     {
         resetPowerUps();
+		powerUpVine = true;
     }
 	
 	void resetPowerUps()

@@ -7,7 +7,6 @@ using UnityEngine.Tilemaps;
 
 public class PlayerPower : MonoBehaviour
 {
-    [SerializeField] Tilemap wallTilemap;
     [SerializeField] Tilemap vineTilemap;
 	[SerializeField] Tilemap groundTilemap;
     [SerializeField] Tile vineTile;
@@ -39,12 +38,12 @@ public class PlayerPower : MonoBehaviour
 			Vector3Int currentVineToPlace = new Vector3Int(vineStart.x, vineStart.y, vineStart.z);
 			//Checking if there is a wall for the vine to grow on
 			
-			if (existingVine && wallTilemap.GetTile(currentReferenceWallTile) != null)
+			if (existingVine && groundTilemap.GetTile(currentReferenceWallTile) != null)
 			{
 				clearVines();
 			}
 
-			while (wallTilemap.GetTile(currentReferenceWallTile) != null && groundTilemap.GetTile(currentVineToPlace) == null) // Checking if the wall ends or theres a ceiling
+			while (groundTilemap.GetTile(currentReferenceWallTile) != null && groundTilemap.GetTile(currentVineToPlace) == null) // Checking if the wall ends or theres a ceiling
 			{
 				vineTilemap.SetTile(currentVineToPlace, vineTile);
 				//Vine Growing
