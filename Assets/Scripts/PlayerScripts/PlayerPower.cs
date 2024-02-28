@@ -28,7 +28,7 @@ public class PlayerPower : MonoBehaviour
     {
 		//powerup used
 		//Debug.Log("PowerUp Used");
-		if (playerResource.powerUpVine && playerMovement.isGrounded())
+		/*if (playerResource.powerUpVine && playerMovement.isGrounded())
 		{
 			Vector3Int vineStart;
 			vineStart = new Vector3Int((int)math.floor(transform.localPosition.x), (int)math.round(transform.localPosition.y), (int)transform.localPosition.z);
@@ -56,6 +56,7 @@ public class PlayerPower : MonoBehaviour
 				//Only sets to true if vine grows;
 			}
 		}
+		*/
 	}
 	
 	void clearVines()

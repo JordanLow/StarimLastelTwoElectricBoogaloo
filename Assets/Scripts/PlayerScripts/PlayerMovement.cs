@@ -9,7 +9,8 @@ using UnityEngine.Tilemaps;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float moveValue = 1f;
-	//[SerializeField] float sprintValue = 2f;
+	[SerializeField] float sprintValue = 2f;
+	[SerializeField] float phaseDuration = 1f;
 	//[SerializeField] float grassSprintValue = 4f;
     [SerializeField] float jumpHeight = 30f;
 	[SerializeField] float forestLeapBoost = 2f;
@@ -26,14 +27,17 @@ public class PlayerMovement : MonoBehaviour
 
 	bool tryingToClimb = false;
 	int direction = 1; // 1: Facing Right, -1: Facing Left
+	float phaseTimer = 0;
 
     Vector2 moveInput;
     Rigidbody2D myRigidBody;
+	TilemapCollider2D groundCollider;
 
     // Start is called before the first frame update
     void Start()
     {
         myRigidBody = GetComponent<Rigidbody2D>();
+		groundCollider = groundTilemap.GetComponent<TilemapCollider2D>();
     }
 
     // Update is called once per frame
@@ -42,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
         Move();
 		FlipFacing();
 		ClimbVine();
+		Phase();
     }
 
     void OnMove(InputValue value)
@@ -64,6 +69,15 @@ public class PlayerMovement : MonoBehaviour
 			return;
 		}
 		tryingToClimb = false;
+		if (Input.GetKey(KeyCode.S))
+		{
+			//Checking if not on ground or if platform is not soft
+			if (!isGrounded() | groundTilemap.GetTile(new Vector3Int((int)math.floor(transform.localPosition.x), (int)math.round(transform.localPosition.y) - 2, (int)transform.localPosition.z)) != null){return;}
+			//Phase through soft floor
+			groundCollider.enabled = false;
+			phaseTimer = 0;
+			//Debug.Log("Here");
+		}
 		//To ensure climbing always stops when space is released
 		//Climbing Vine Interactions
 		if (!isGrounded()) {return;};
@@ -168,4 +182,13 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 	*/
+	void Phase()
+	{
+		if (groundCollider.enabled){return;}
+		if (phaseTimer >= phaseDuration)
+		{
+			groundCollider.enabled = true;
+		}
+		phaseTimer += Time.deltaTime;
+	}
 }
