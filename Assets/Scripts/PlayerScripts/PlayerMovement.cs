@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
+using System;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -15,13 +16,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float jumpHeight = 30f;
 	[SerializeField] float forestLeapBoost = 2f;
 	[SerializeField] float climbSpeed = 1f;
-	[SerializeField] BoxCollider2D myFeetCollider;
-	[SerializeField] CapsuleCollider2D myHurtBoxCollider;
+	[SerializeField] int spriteWidth = 3;
+	//Currently only works for odd numbers
+	BoxCollider2D myFeetCollider;
+	PolygonCollider2D myHurtBoxCollider;
 	//[SerializeField] GameObject grass; // Type of Grass to spawn
 	GameObject currentInteractingGrass;
 	
 	[SerializeField] Animator animator;
-	[SerializeField] Tile grassTile;
+	[SerializeField] RuleTile grassTile;
 	[SerializeField] Tilemap grassTilemap;
 	[SerializeField] Tilemap groundTilemap;
 
@@ -38,6 +41,8 @@ public class PlayerMovement : MonoBehaviour
     {
         myRigidBody = GetComponent<Rigidbody2D>();
 		groundCollider = groundTilemap.GetComponent<TilemapCollider2D>();
+		myFeetCollider = GetComponentInChildren<BoxCollider2D>();
+		myHurtBoxCollider = GetComponent<PolygonCollider2D>();
     }
 
     // Update is called once per frame
@@ -105,7 +110,17 @@ public class PlayerMovement : MonoBehaviour
 	
 	bool grassSpawnCheck() // Check if current ground is valid for grass growth
 	{
-		return /*!Input.GetKey(KeyCode.LeftShift) &&*/ isGrounded() && moveInput.x != 0 && !onGrass();
+		if (!isGrounded()){
+			return false; 
+		}
+		if (moveInput.x == 0){
+			return false;
+		}
+		bool onGrassTile = (groundTilemap.GetTile(new Vector3Int((int)math.floor(transform.localPosition.x), (int)math.round(transform.localPosition.y) - 2, (int)transform.localPosition.z)) == grassTile);
+		if (onGrassTile){
+			return false;
+		}
+		return true;
 	}
 	
     void Move()
@@ -144,10 +159,15 @@ public class PlayerMovement : MonoBehaviour
 		myRigidBody.velocity = playerVelocity;
 		if (grassSpawnCheck()) 
 		{
-			Vector3Int grassSpawn = new Vector3Int((int)math.floor(transform.localPosition.x), (int)math.round(transform.localPosition.y), (int)transform.localPosition.z);
-			if (groundTilemap.GetTile(new Vector3Int((int)math.floor(transform.localPosition.x), (int)math.round(transform.localPosition.y) - 1, (int)transform.localPosition.z)) != null)
+			//Debug.Log(((int)(spriteWidth/2)).ToString());
+			for (int offset = 0 - (int)(spriteWidth/2); offset <= (int)(spriteWidth/2); offset++)
 			{
-				grassTilemap.SetTile(grassSpawn, grassTile);
+				Vector3Int grassSpawn = new Vector3Int((int)math.floor(transform.localPosition.x) + offset, (int)math.round(transform.localPosition.y) - 1, (int)transform.localPosition.z);
+				bool onGroundTile = groundTilemap.GetTile(new Vector3Int((int)math.floor(transform.localPosition.x) + offset, (int)math.round(transform.localPosition.y) - 2, (int)transform.localPosition.z)) != null;
+				if (onGroundTile)
+				{
+					grassTilemap.SetTile(grassSpawn, grassTile);
+				}
 			}
 			//Instantiate(grass, grassSpawn, transform.rotation);
 			//OnSpawner();
