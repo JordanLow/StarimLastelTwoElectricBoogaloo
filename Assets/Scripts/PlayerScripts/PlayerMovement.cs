@@ -77,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
 		if (Input.GetKey(KeyCode.S))
 		{
 			//Checking if not on ground or if platform is not soft
-			if (!isGrounded() | groundTilemap.GetTile(new Vector3Int((int)math.floor(transform.localPosition.x), (int)math.round(transform.localPosition.y) - 2, (int)transform.localPosition.z)) != null){return;}
+			if (!isGrounded() | groundTilemap.GetTile(new Vector3Int((int)math.floor(transform.localPosition.x), (int)math.round(transform.localPosition.y) - 3, (int)transform.localPosition.z)) != null){return;}
 			//Phase through soft floor
 			groundCollider.enabled = false;
 			phaseTimer = 0;
