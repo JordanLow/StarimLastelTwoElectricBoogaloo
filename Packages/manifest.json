@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "com.seanba.super-tiled2unity": "file:C:/Users/chewc/Downloads/super-tiled2unity.v2.1.1",
     "com.unity.cinemachine": "2.8.9",
     "com.unity.collab-proxy": "1.17.7",
     "com.unity.feature.2d": "1.0.0",

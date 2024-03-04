@@ -10,9 +10,9 @@ using System;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float moveValue = 1f;
-	[SerializeField] float sprintValue = 2f;
+	//[SerializeField] float sprintValue = 2f;
 	[SerializeField] float phaseDuration = 1f;
-	//[SerializeField] float grassSprintValue = 4f;
+	[SerializeField] float grassMoveValue = 4f;
     [SerializeField] float jumpHeight = 30f;
 	[SerializeField] float forestLeapBoost = 2f;
 	[SerializeField] float climbSpeed = 1f;
@@ -154,7 +154,10 @@ public class PlayerMovement : MonoBehaviour
 		}
 		*/
 		// Refactor our of Unity Animator State Machine when possible, this bit here sucks. Set params by ID as interim measure if needed
-		
+		if (onGrass())
+		{
+			move = grassMoveValue;
+		}
         Vector2 playerVelocity = new Vector2(moveInput.x * move, myRigidBody.velocity.y);
 		myRigidBody.velocity = playerVelocity;
 		if (grassSpawnCheck()) 
