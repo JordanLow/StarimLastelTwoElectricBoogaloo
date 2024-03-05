@@ -10,6 +10,9 @@ public class PlayerPower : MonoBehaviour
     [SerializeField] Tilemap vineTilemap;
 	[SerializeField] Tilemap groundTilemap;
     [SerializeField] Tile vineTile;
+	[SerializeField] Tilemap grassTilemap;
+	[SerializeField] RuleTile grassTile;
+	[SerializeField] float growMagnitude = 1f;
     //Probably a better way to get this data, just using this for now
     //TODO find better way to get this data
 
@@ -59,6 +62,24 @@ public class PlayerPower : MonoBehaviour
 		*/
 	}
 	
+	//Flourish Dive
+	void OnCollisionEnter2D(Collision2D collision)
+	{
+		//Debug.Log("here");
+		if (playerMovement.isGrounded())
+		{
+			//GrowVines
+			for (int offset = (int)(0 - collision.relativeVelocity.y * growMagnitude) ; offset <= (int)(collision.relativeVelocity.y * growMagnitude); offset++)
+			{
+				Vector3Int grassSpawn = new Vector3Int((int)math.floor(transform.localPosition.x) + offset, (int)math.round(transform.localPosition.y) - 1, (int)transform.localPosition.z);
+				bool onGroundTile = groundTilemap.GetTile(new Vector3Int((int)math.floor(transform.localPosition.x) + offset, (int)math.round(transform.localPosition.y) - 2, (int)transform.localPosition.z)) != null;
+				if (onGroundTile && groundTilemap.GetTile(grassSpawn) == null)
+				{
+					grassTilemap.SetTile(grassSpawn, grassTile);
+				}
+			}
+		}
+	}
 	void clearVines()
 	{
 		vineTilemap.ClearAllTiles();
