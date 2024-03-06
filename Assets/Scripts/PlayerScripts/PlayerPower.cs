@@ -7,11 +7,15 @@ using UnityEngine.Tilemaps;
 
 public class PlayerPower : MonoBehaviour
 {
-    [SerializeField] Tilemap vineTilemap;
-	[SerializeField] Tilemap groundTilemap;
-    [SerializeField] Tile vineTile;
-	[SerializeField] Tilemap grassTilemap;
-	[SerializeField] RuleTile grassTile;
+    Tilemap vineTilemap;
+	Tilemap groundTilemap;
+	Tilemap softGroundTilemap;
+    Tile vineTile;
+	Tilemap grassTilemap;
+	RuleTile grassTile;
+	PlayerReferences playerReferences;
+    [SerializeField] int spriteWidth = 3;
+	[SerializeField] int spriteHeight = 2;
 	[SerializeField] float growMagnitude = 1f;
     //Probably a better way to get this data, just using this for now
     //TODO find better way to get this data
@@ -23,8 +27,16 @@ public class PlayerPower : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+		playerReferences = GetComponent<PlayerReferences>();
         playerResource = GetComponent<PlayerResource>();
         playerMovement = GetComponent<PlayerMovement>();
+		//Player References
+		vineTilemap = playerReferences.vineTilemap;
+		groundTilemap = playerReferences.groundTilemap;
+		vineTile = playerReferences.vineTile;
+		grassTilemap = playerReferences.grassTilemap;
+		grassTile = playerReferences.grassTile;
+		softGroundTilemap = playerReferences.softGroundTilemap;
     }
 
     void OnPowerUp(InputValue value)
@@ -61,6 +73,23 @@ public class PlayerPower : MonoBehaviour
 		}
 		*/
 	}
+	void Update()
+    {
+        if (playerMovement.isMoving() && playerMovement.isGrounded()) 
+		{
+			//Debug.Log(((int)(spriteWidth/2)).ToString());
+			for (int offset = 0 - (int)(spriteWidth/2); offset <= (int)(spriteWidth/2); offset++)
+			{
+				Vector3Int grassSpawn = new Vector3Int((int)math.floor(transform.localPosition.x) + offset, (int)math.round(transform.localPosition.y) - 1, (int)transform.localPosition.z);
+				if (grassSpawnable(grassSpawn))
+				{
+					grassTilemap.SetTile(grassSpawn, grassTile);
+				}
+			}
+			//Instantiate(grass, grassSpawn, transform.rotation);
+			//OnSpawner();
+		}
+    }
 	
 	//Flourish Dive
 	void OnCollisionEnter2D(Collision2D collision)
@@ -72,8 +101,7 @@ public class PlayerPower : MonoBehaviour
 			for (int offset = (int)(0 - collision.relativeVelocity.y * growMagnitude) ; offset <= (int)(collision.relativeVelocity.y * growMagnitude); offset++)
 			{
 				Vector3Int grassSpawn = new Vector3Int((int)math.floor(transform.localPosition.x) + offset, (int)math.round(transform.localPosition.y) - 1, (int)transform.localPosition.z);
-				bool onGroundTile = groundTilemap.GetTile(new Vector3Int((int)math.floor(transform.localPosition.x) + offset, (int)math.round(transform.localPosition.y) - 2, (int)transform.localPosition.z)) != null;
-				if (onGroundTile && groundTilemap.GetTile(grassSpawn) == null)
+				if (grassSpawnable(grassSpawn))
 				{
 					grassTilemap.SetTile(grassSpawn, grassTile);
 				}
@@ -84,6 +112,17 @@ public class PlayerPower : MonoBehaviour
 	{
 		vineTilemap.ClearAllTiles();
 		existingVine = false;
+	}
+
+	bool grassSpawnable(Vector3Int coordinates)
+	{
+		//Checks if tile is a ground tile
+		if (groundTilemap.GetTile(coordinates) != null){return false;}
+		if (softGroundTilemap.GetTile(coordinates) != null){return false;}
+		coordinates.y -= 1;
+		//Checks if the tile below is ground
+		if (groundTilemap.GetTile(coordinates) == null && softGroundTilemap.GetTile(coordinates) == null){return false;}
+		return true;
 	}
 	
 	// Event Listeners
