@@ -10,13 +10,12 @@ using System;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float moveValue = 1f;
-	//[SerializeField] float sprintValue = 2f;
+	[SerializeField] float dashValue = 2f;
 	[SerializeField] float phaseDuration = 1f;
 	[SerializeField] float grassMoveValue = 4f;
     [SerializeField] float jumpHeight = 30f;
 	[SerializeField] float forestLeapBoost = 2f;
 	//[SerializeField] float climbSpeed = 1f;
-	//Currently only works for odd numbers
 	BoxCollider2D myFeetCollider;
 	PolygonCollider2D myHurtBoxCollider;
 	//[SerializeField] GameObject grass; // Type of Grass to spawn
@@ -33,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody2D myRigidBody;
 	TilemapCollider2D groundCollider;
 	PlayerReferences playerReferences;
+	public bool isDashing {get; set;}
 
     // Start is called before the first frame update
     void Start()
@@ -57,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
+		//Debug.Log(moveInput.x.ToString());
     }
 	
 	void OnJump(InputValue value)
@@ -81,7 +82,8 @@ public class PlayerMovement : MonoBehaviour
 	
 	public bool isMoving()
 	{
-		return moveInput.x != 0;
+		bool playerHasHorizontalSpeed = Mathf.Abs(myRigidBody.velocity.x) > Mathf.Epsilon;
+		return playerHasHorizontalSpeed;
 	}
 	public bool isGrounded()
 	{
@@ -100,6 +102,12 @@ public class PlayerMovement : MonoBehaviour
 		{
 			move = grassMoveValue;
 		}
+		Vector2 playerVelocity = new Vector2(moveInput.x * move, myRigidBody.velocity.y);
+		if (isDashing)
+		{
+			playerVelocity = new Vector2(transform.localScale.x * dashValue, 0);
+		}
+		myRigidBody.velocity = playerVelocity;
 		//TODO IMPLEMENT THIS, CURRENTLY COMMENTED OUT BECAUSE CLOGGING TERMINAL
 		//animator.SetBool("Walking", true);
 		/*
@@ -128,15 +136,11 @@ public class PlayerMovement : MonoBehaviour
 		}
 		*/
 		// Refactor our of Unity Animator State Machine when possible, this bit here sucks. Set params by ID as interim measure if needed
-        Vector2 playerVelocity = new Vector2(moveInput.x * move, myRigidBody.velocity.y);
-		myRigidBody.velocity = playerVelocity;
     }
 	
 	void FlipFacing()
     {
-		//if (!isGrounded()) {return;} this is not meant to be here
-		bool playerHasHorizontalSpeed = Mathf.Abs(myRigidBody.velocity.x) > Mathf.Epsilon;
-		if (playerHasHorizontalSpeed)
+		if (isMoving())
 		{
 			transform.localScale = new Vector2((Mathf.Sign(myRigidBody.velocity.x)) * Mathf.Abs(transform.localScale.x), transform.localScale.y);
 			direction = ((int)Mathf.Sign(myRigidBody.velocity.x));

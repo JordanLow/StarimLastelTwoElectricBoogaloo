@@ -1685,6 +1685,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveValue: 5
+  dashValue: 10
   phaseDuration: 0.155
   grassMoveValue: 10
   jumpHeight: 30
@@ -1758,6 +1759,7 @@ MonoBehaviour:
   spriteWidth: 3
   spriteHeight: 2
   growMagnitude: 0.05
+  dashDuration: 1
 --- !u!95 &799452365
 Animator:
   serializedVersion: 4

@@ -24,18 +24,18 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Power-Up",
+                    "name": "Interact",
                     "type": "Button",
-                    "id": "17c06064-e848-4ec4-8502-b96a871c555d",
+                    "id": "ead58d76-e538-44f5-9ee0-7be834572470",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Interact",
+                    "name": "Dash",
                     "type": "Button",
-                    "id": "ead58d76-e538-44f5-9ee0-7be834572470",
+                    "id": "3288074e-8314-4f05-b39a-28875690bcb9",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -177,34 +177,23 @@
                 },
                 {
                     "name": "",
-                    "id": "dc4f7486-1470-429e-8ff2-9a7e68421a9f",
-                    "path": "<Keyboard>/s",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Power-Up",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "3c98d024-0fa1-4a2b-b7f1-fe91389de72a",
-                    "path": "<Keyboard>/downArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Power-Up",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "b8f06be4-2b1c-4711-8565-cc0d63ad9dd1",
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a03ed200-1efd-4cc8-b2af-e08391724f1c",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

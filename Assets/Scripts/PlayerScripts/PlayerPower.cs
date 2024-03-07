@@ -17,12 +17,16 @@ public class PlayerPower : MonoBehaviour
     [SerializeField] int spriteWidth = 3;
 	[SerializeField] int spriteHeight = 2;
 	[SerializeField] float growMagnitude = 1f;
+	[SerializeField] float dashDuration = 1f;
     //Probably a better way to get this data, just using this for now
     //TODO find better way to get this data
 
     PlayerResource playerResource;
     PlayerMovement playerMovement;
+	Rigidbody2D playerRigidbody2D;
     bool existingVine = false;
+	float dashTimer = 0f;
+	float gravityScale;
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +34,8 @@ public class PlayerPower : MonoBehaviour
 		playerReferences = GetComponent<PlayerReferences>();
         playerResource = GetComponent<PlayerResource>();
         playerMovement = GetComponent<PlayerMovement>();
+		playerRigidbody2D = GetComponent<Rigidbody2D>();
+		gravityScale = playerRigidbody2D.gravityScale;
 		//Player References
 		vineTilemap = playerReferences.vineTilemap;
 		groundTilemap = playerReferences.groundTilemap;
@@ -39,39 +45,10 @@ public class PlayerPower : MonoBehaviour
 		softGroundTilemap = playerReferences.softGroundTilemap;
     }
 
-    void OnPowerUp(InputValue value)
-    {
-		//powerup used
-		//Debug.Log("PowerUp Used");
-		/*if (playerResource.powerUpVine && playerMovement.isGrounded())
-		{
-			Vector3Int vineStart;
-			vineStart = new Vector3Int((int)math.floor(transform.localPosition.x), (int)math.round(transform.localPosition.y), (int)transform.localPosition.z);
-			//Finds Vine start location based on player character position & facing direction
-			
-			Vector3Int currentReferenceWallTile = new Vector3Int(vineStart.x + (int)transform.localScale.x, vineStart.y, vineStart.z);
-			Vector3Int currentVineToPlace = new Vector3Int(vineStart.x, vineStart.y, vineStart.z);
-			//Checking if there is a wall for the vine to grow on
-			
-			if (existingVine && groundTilemap.GetTile(currentReferenceWallTile) != null)
-			{
-				clearVines();
-			}
-
-			while (groundTilemap.GetTile(currentReferenceWallTile) != null && groundTilemap.GetTile(currentVineToPlace) == null) // Checking if the wall ends or theres a ceiling
-			{
-				vineTilemap.SetTile(currentVineToPlace, vineTile);
-				//Vine Growing
-				
-				currentReferenceWallTile += new Vector3Int(0, 1, 0);
-				currentVineToPlace += new Vector3Int(0, 1, 0);
-				//Iterating
-				
-				existingVine = true;
-				//Only sets to true if vine grows;
-			}
-		}
-		*/
+	void OnDash()
+	{
+		playerMovement.isDashing = true;
+		playerRigidbody2D.gravityScale = 0;
 	}
 	void Update()
     {
@@ -89,6 +66,7 @@ public class PlayerPower : MonoBehaviour
 			//Instantiate(grass, grassSpawn, transform.rotation);
 			//OnSpawner();
 		}
+		DashHandler();
     }
 	
 	//Flourish Dive
@@ -133,5 +111,16 @@ public class PlayerPower : MonoBehaviour
 	private void OnDisable()
 	{
 		EventHandler.OnExitLevel -= clearVines;
+	}
+	void DashHandler()
+	{
+		if (!playerMovement.isDashing){return;}
+		if (dashTimer >= dashDuration)
+		{
+			playerMovement.isDashing = false;
+			dashTimer = 0f;
+			playerRigidbody2D.gravityScale = gravityScale;
+		}
+		dashTimer += Time.deltaTime;
 	}
 }
