@@ -27,6 +27,7 @@ public class PlayerPower : MonoBehaviour
     bool existingVine = false;
 	float dashTimer = 0f;
 	float gravityScale;
+	public bool canDash {get; set;}
 
     // Start is called before the first frame update
     void Start()
@@ -43,26 +44,24 @@ public class PlayerPower : MonoBehaviour
 		grassTilemap = playerReferences.grassTilemap;
 		grassTile = playerReferences.grassTile;
 		softGroundTilemap = playerReferences.softGroundTilemap;
+		canDash = true;
     }
 
 	void OnDash()
 	{
-		playerMovement.isDashing = true;
-		playerRigidbody2D.gravityScale = 0;
+		if (canDash)
+		{
+			playerMovement.isDashing = true;
+			playerRigidbody2D.gravityScale = 0;
+			canDash = false;
+		}
 	}
 	void Update()
     {
         if (playerMovement.isMoving() && playerMovement.isGrounded()) 
 		{
 			//Debug.Log(((int)(spriteWidth/2)).ToString());
-			for (int offset = 0 - (int)(spriteWidth/2); offset <= (int)(spriteWidth/2); offset++)
-			{
-				Vector3Int grassSpawn = new Vector3Int((int)math.floor(transform.localPosition.x) + offset, (int)math.round(transform.localPosition.y) - 1, (int)transform.localPosition.z);
-				if (grassSpawnable(grassSpawn))
-				{
-					grassTilemap.SetTile(grassSpawn, grassTile);
-				}
-			}
+			GrowGrass((int)(spriteWidth/2));
 			//Instantiate(grass, grassSpawn, transform.rotation);
 			//OnSpawner();
 		}
@@ -76,14 +75,7 @@ public class PlayerPower : MonoBehaviour
 		if (playerMovement.isGrounded())
 		{
 			//GrowVines
-			for (int offset = (int)(0 - collision.relativeVelocity.y * growMagnitude) ; offset <= (int)(collision.relativeVelocity.y * growMagnitude); offset++)
-			{
-				Vector3Int grassSpawn = new Vector3Int((int)math.floor(transform.localPosition.x) + offset, (int)math.round(transform.localPosition.y) - 1, (int)transform.localPosition.z);
-				if (grassSpawnable(grassSpawn))
-				{
-					grassTilemap.SetTile(grassSpawn, grassTile);
-				}
-			}
+			GrowGrass((int)(collision.relativeVelocity.y * growMagnitude));
 		}
 	}
 	void clearVines()
@@ -112,14 +104,28 @@ public class PlayerPower : MonoBehaviour
 	{
 		EventHandler.OnExitLevel -= clearVines;
 	}
+	void GrowGrass (int radius)
+	{
+		for (int offset = 0 - radius ; offset <= radius; offset++)
+		{
+			Vector3Int grassSpawn = new Vector3Int((int)math.floor(transform.localPosition.x) + offset, (int)math.round(transform.localPosition.y) - 1, (int)transform.localPosition.z);
+			if (grassSpawnable(grassSpawn))
+			{
+				grassTilemap.SetTile(grassSpawn, grassTile);
+			}
+		}
+	}
 	void DashHandler()
 	{
+		if (playerMovement.isGrounded()){canDash = true;}
 		if (!playerMovement.isDashing){return;}
 		if (dashTimer >= dashDuration)
 		{
 			playerMovement.isDashing = false;
 			dashTimer = 0f;
 			playerRigidbody2D.gravityScale = gravityScale;
+			//grow grass
+			GrowGrass((int)(playerMovement.dashValue * growMagnitude));
 		}
 		dashTimer += Time.deltaTime;
 	}
