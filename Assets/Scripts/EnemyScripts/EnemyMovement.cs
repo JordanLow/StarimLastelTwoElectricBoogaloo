@@ -2,17 +2,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEngine.Tilemaps;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
     [SerializeField] int moveValue = 1;
     Rigidbody2D myRigidBody;
-    BoxCollider2D enemyVision;
+    CapsuleCollider2D enemyVision;
+    Animator enemyAnimator;
+    Tilemap grassTilemap;
+    EnemyReferences enemyReferences;
+    bool converted = false;
+
     void Start()
     {
+        enemyReferences = GetComponent<EnemyReferences>();
+        enemyAnimator = GetComponent<Animator>();
         myRigidBody = GetComponent<Rigidbody2D>();
-        enemyVision = GetComponent<BoxCollider2D>();
+        enemyVision = GetComponent<CapsuleCollider2D>();
+        grassTilemap = enemyReferences.grassTilemap;
     }
 
     void Update()
@@ -22,7 +32,7 @@ public class EnemyMovement : MonoBehaviour
     }
     void OnTriggerExit2D(Collider2D other)
     {
-        if (!enemyVision.IsTouchingLayers(LayerMask.GetMask("Ground")))
+        if (!enemyVision.IsTouchingLayers(LayerMask.GetMask("Ground")) && !enemyVision.IsTouchingLayers(LayerMask.GetMask("SoftGround")))
         {
             moveValue = -moveValue;
             //Flips the movement Direction
@@ -31,29 +41,40 @@ public class EnemyMovement : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Grass")
+        if (other.transform.tag == "Player" && !converted)
         {
-            Destroy(other.transform.parent.gameObject);
-            //Destroys Grass object since collider is in child
-        }
-		if (enemyVision.IsTouchingLayers(LayerMask.GetMask("Wall")))
-        {
-            moveValue = -moveValue;
-            //Flips the movement Direction
-            FlipEnemyFacing();
+            if (other.transform.GetComponent<PlayerMovement>().isDashing)
+            {
+                ConvertEnemy();
+            }
+            else
+            {
+                other.transform.GetComponent<PlayerDeath>().Die();
+            }
         }
     }
-    void OnCollisionEnter2D(Collision2D other)
+
+    void OnTriggerStay2D(Collider2D other)
     {
-        if (other.transform.tag == "Player")
+        if (other.transform.tag == "Grass" && !converted)
         {
-            other.transform.GetComponent<PlayerDeath>().Die();
-            //Kills Player
+            RemoveGrass();
         }
     }
     void FlipEnemyFacing()
     {
         transform.localScale = new Vector2(-Math.Sign(myRigidBody.velocity.x), 1f);
         //Flips the x scale of sprite, changing its facing.
+    }
+
+    void RemoveGrass()
+    {
+        Vector3Int interactedGrass = new Vector3Int((int)math.floor(transform.localPosition.x - transform.localScale.x), (int)math.round(transform.localPosition.y) - 1, (int)transform.localPosition.z);
+        grassTilemap.SetTile(interactedGrass, null);
+    }
+    void ConvertEnemy()
+    {
+        enemyAnimator.SetBool("isConverted", true);
+        converted = true;
     }
 }

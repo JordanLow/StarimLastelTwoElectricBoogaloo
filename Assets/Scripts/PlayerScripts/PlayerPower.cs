@@ -15,7 +15,7 @@ public class PlayerPower : MonoBehaviour
 	RuleTile grassTile;
 	PlayerReferences playerReferences;
     [SerializeField] int spriteWidth = 3;
-	[SerializeField] int spriteHeight = 2;
+	//[SerializeField] int spriteHeight = 2;
 	[SerializeField] float growMagnitude = 1f;
 	[SerializeField] float dashDuration = 1f;
     //Probably a better way to get this data, just using this for now
@@ -24,7 +24,7 @@ public class PlayerPower : MonoBehaviour
     PlayerResource playerResource;
     PlayerMovement playerMovement;
 	Rigidbody2D playerRigidbody2D;
-    bool existingVine = false;
+    //bool existingVine = false;
 	float dashTimer = 0f;
 	float gravityScale;
 	public bool canDash {get; set;}
@@ -84,7 +84,7 @@ public class PlayerPower : MonoBehaviour
 		existingVine = false;
 	}
 
-	bool grassSpawnable(Vector3Int coordinates)
+	bool GrassSpawnable(Vector3Int coordinates)
 	{
 		//Checks if tile is a ground tile
 		if (groundTilemap.GetTile(coordinates) != null){return false;}
@@ -109,7 +109,7 @@ public class PlayerPower : MonoBehaviour
 		for (int offset = 0 - radius ; offset <= radius; offset++)
 		{
 			Vector3Int grassSpawn = new Vector3Int((int)math.floor(transform.localPosition.x) + offset, (int)math.round(transform.localPosition.y) - 1, (int)transform.localPosition.z);
-			if (grassSpawnable(grassSpawn))
+			if (GrassSpawnable(grassSpawn))
 			{
 				grassTilemap.SetTile(grassSpawn, grassTile);
 			}
