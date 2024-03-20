@@ -24,7 +24,7 @@ public class PlayerPower : MonoBehaviour
     PlayerResource playerResource;
     PlayerMovement playerMovement;
 	Rigidbody2D playerRigidbody2D;
-    //bool existingVine = false;
+    bool existingVine = false;
 	float dashTimer = 0f;
 	float gravityScale;
 	public bool canDash {get; set;}

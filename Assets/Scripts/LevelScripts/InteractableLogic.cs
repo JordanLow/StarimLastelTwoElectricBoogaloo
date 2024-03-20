@@ -10,6 +10,7 @@ public class InteractableLogic : MonoBehaviour
 
     //variables for lever
     Tilemap linkedDoor;
+	// Link the paired doorTop and doorBottom objects instead;
     bool on = false;
     [SerializeField] Sprite leverOn;
     [SerializeField] Sprite leverOff;
@@ -27,11 +28,13 @@ public class InteractableLogic : MonoBehaviour
     public void Interact()
     {
         //Debug.Log("Interacted");
-        //interact logic
+        //interact logic (polymorphic for future use)
         if (interactableType == "lever")
         {
             on = !on;
             linkedDoor.gameObject.SetActive(!on);
+			// Make and play the door animation
+			// Door turning off its collision is a property of the door itself.
             if (on)
             {
                 selfSpriteRenderer.sprite = leverOn;
