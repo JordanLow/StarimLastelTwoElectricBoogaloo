@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    InteractableLogic currentInteractable;
+    IInteractable currentInteractable;
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -14,7 +14,7 @@ public class PlayerInteraction : MonoBehaviour
         if (other.gameObject.tag == "Interactable")
         {
             //Debug.Log("Inside");
-            currentInteractable = other.gameObject.GetComponent<InteractableLogic>();
+            currentInteractable = other.gameObject.GetComponent<IInteractable>();
         }
     }
 
@@ -25,6 +25,7 @@ public class PlayerInteraction : MonoBehaviour
 
     void OnInteract(InputValue value)
     {
+		//Debug.Log(currentInteractable);
         if (currentInteractable == null){return;}
         currentInteractable.Interact();
     }

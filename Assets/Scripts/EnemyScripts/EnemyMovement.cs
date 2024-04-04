@@ -11,6 +11,7 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] int moveValue = 1;
     Rigidbody2D myRigidBody;
     CapsuleCollider2D enemyVision;
+	CircleCollider2D wallVision;
     Animator enemyAnimator;
     Tilemap grassTilemap;
     EnemyReferences enemyReferences;
@@ -22,6 +23,7 @@ public class EnemyMovement : MonoBehaviour
         enemyAnimator = GetComponent<Animator>();
         myRigidBody = GetComponent<Rigidbody2D>();
         enemyVision = GetComponent<CapsuleCollider2D>();
+		wallVision = GetComponent<CircleCollider2D>();
         grassTilemap = enemyReferences.grassTilemap;
     }
 
@@ -52,6 +54,11 @@ public class EnemyMovement : MonoBehaviour
                 other.transform.GetComponent<PlayerDeath>().Die();
             }
         }
+		if (wallVision.IsTouchingLayers(LayerMask.GetMask("Ground"))) {
+			moveValue = -moveValue;
+            //Flips the movement Direction
+            FlipEnemyFacing();
+		}
     }
 
     void OnTriggerStay2D(Collider2D other)

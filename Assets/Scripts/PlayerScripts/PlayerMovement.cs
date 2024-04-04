@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float moveValue = 1f;
 	public float dashValue = 2f;
-	[SerializeField] float phaseDuration = 1f;
+	[SerializeField] float phaseDuration = 2f;
 	[SerializeField] float grassMoveValue = 4f;
     [SerializeField] float jumpHeight = 30f;
 	[SerializeField] float forestLeapBoost = 2f;
